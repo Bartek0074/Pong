@@ -1,11 +1,15 @@
 // Initial setup
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+const scorePlayerOneText = document.querySelector('.score--player1');
+const scorePlayerTwoText = document.querySelector('.score--player2');
 
 canvas.width = 800;
 canvas.height = 450;
 
 // Variables
+let scorePlayerOne = 0;
+let scorePlayerTwo = 0;
 const paddleSpeed = 5;
 const ballSpeed = 8;
 
@@ -28,6 +32,11 @@ function calculateAngle() {
     } while((angle < 120 && angle > 60) || angle < 300 && angle > 240)
     
     return angle;
+}
+
+function updateScore() {
+    scorePlayerOneText.textContent = scorePlayerOne;
+    scorePlayerTwoText.textContent = scorePlayerTwo;
 }
 
 function controlPaddles() {
@@ -71,6 +80,16 @@ class Ball {
                 this.dy = -this.dy;
             }
 
+            // updating score
+            if (this.x + this.radius >= canvas.width) {
+                scorePlayerOne++;
+                updateScore();
+            }
+            if (this.x - this.radius <= 0) {
+                scorePlayerTwo++;
+                updateScore();
+            }
+
             // checking if anyone won point
             if (this.x - this.radius <= 0 || this.x + this.radius >= canvas.width) {
                 this.angle = calculateAngle();
@@ -78,6 +97,7 @@ class Ball {
                 this.x = canvas.width/2;
                 this.y = randomIntFromRange(0.25 * canvas.height, 0.75 * canvas.height);
             }
+
 
             // collision
             paddles.forEach(paddle => {
@@ -170,9 +190,10 @@ class Paddle {
 let ball;
 let leftPaddle;
 let rightPaddle;
-const paddles = [];
+let paddles = [];
 
 function init() {
+    paddles = [];
     ball = new Ball(canvas.width/2, canvas.height/2, ballSpeed, calculateAngle(), 5, '#f3f3f3');
 
     const hPaddle = 100;
@@ -233,41 +254,11 @@ window.addEventListener('keyup', e => {
     controlPaddles();
 })
 
-// window.addEventListener('keydown', e => {
-//     switch (e.key) {
-//         case 'w':
-//             leftPaddle.dy = -paddleSpeed;
-//             break;
-//         case 's':
-//             leftPaddle.dy = paddleSpeed;
-//             break;
-//         case 'ArrowUp':
-//             rightPaddle.dy = -paddleSpeed;
-//             break;
-//         case 'ArrowDown':
-//             rightPaddle.dy = paddleSpeed;
-//             break;
-//     }
-// })
+// Start game function
 
-// window.addEventListener('keyup', e => {
-//     switch (e.key) {
-//         case 'w':
-//             leftPaddle.dy = 0;
-//             break;
-//         case 's':
-//             leftPaddle.dy = 0;
-//             break;
-//         case 'ArrowUp':
-//             rightPaddle.dy = 0;
-//             break;
-//         case 'ArrowDown':
-//             rightPaddle.dy = 0;
-//             break;
-//     }
-// })
+function startGame() {
+    init();
+    animate();
+}
 
-
-init();
-
-animate();
+startGame();
