@@ -9,6 +9,12 @@ canvas.height = 450;
 const paddleSpeed = 5;
 const ballSpeed = 8;
 
+let keys = {
+    w: false,
+    s: false,
+    arrowUp: false,
+    arrowDown: false
+}
 
 // Utility functions
 function randomIntFromRange(min, max) {
@@ -22,6 +28,16 @@ function calculateAngle() {
     } while((angle < 120 && angle > 60) || angle < 300 && angle > 240)
     
     return angle;
+}
+
+function controlPaddles() {
+    if (keys.w === true) leftPaddle.dy = -paddleSpeed;
+    else if (keys.s === true) leftPaddle.dy = paddleSpeed;
+    else leftPaddle.dy = 0;
+
+    if (keys.arrowUp === true) rightPaddle.dy = -paddleSpeed;
+    else if (keys.arrowDown === true) rightPaddle.dy = paddleSpeed;
+    else rightPaddle.dy = 0;
 }
   
 // Classes
@@ -171,7 +187,8 @@ function init() {
 
 const animate = function() {
     requestAnimationFrame(animate);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle='rgba(79, 79, 79, 0.7)'
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ball.update();
     leftPaddle.update();
@@ -183,36 +200,72 @@ const animate = function() {
 window.addEventListener('keydown', e => {
     switch (e.key) {
         case 'w':
-            leftPaddle.dy = -paddleSpeed;
+            keys.w = true;
             break;
         case 's':
-            leftPaddle.dy = paddleSpeed;
+            keys.s = true;
             break;
         case 'ArrowUp':
-            rightPaddle.dy = -paddleSpeed;
+            keys.arrowUp = true;
             break;
         case 'ArrowDown':
-            rightPaddle.dy = paddleSpeed;
+            keys.arrowDown = true;
             break;
     }
+    controlPaddles()
 })
 
 window.addEventListener('keyup', e => {
     switch (e.key) {
         case 'w':
-            leftPaddle.dy = 0;
+            keys.w = false;
             break;
         case 's':
-            leftPaddle.dy = 0;
+            keys.s = false;
             break;
         case 'ArrowUp':
-            rightPaddle.dy = 0;
+            keys.arrowUp = false;
             break;
         case 'ArrowDown':
-            rightPaddle.dy = 0;
+            keys.arrowDown = false;
             break;
     }
+    controlPaddles();
 })
+
+// window.addEventListener('keydown', e => {
+//     switch (e.key) {
+//         case 'w':
+//             leftPaddle.dy = -paddleSpeed;
+//             break;
+//         case 's':
+//             leftPaddle.dy = paddleSpeed;
+//             break;
+//         case 'ArrowUp':
+//             rightPaddle.dy = -paddleSpeed;
+//             break;
+//         case 'ArrowDown':
+//             rightPaddle.dy = paddleSpeed;
+//             break;
+//     }
+// })
+
+// window.addEventListener('keyup', e => {
+//     switch (e.key) {
+//         case 'w':
+//             leftPaddle.dy = 0;
+//             break;
+//         case 's':
+//             leftPaddle.dy = 0;
+//             break;
+//         case 'ArrowUp':
+//             rightPaddle.dy = 0;
+//             break;
+//         case 'ArrowDown':
+//             rightPaddle.dy = 0;
+//             break;
+//     }
+// })
 
 
 init();
