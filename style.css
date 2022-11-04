@@ -16,5 +16,5 @@ body {
 #canvas {
     border-top: 5px solid #222;
     border-bottom: 5px solid #222;
-    background-color: #4f4f4f;
+    background-color: rgb(79, 79, 79);
 }

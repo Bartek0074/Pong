@@ -2,11 +2,12 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-canvas.width = 600;
+canvas.width = 800;
 canvas.height = 450;
 
 // Variables
 const paddleSpeed = 5;
+const ballSpeed = 8;
 
 
 // Utility functions
@@ -36,7 +37,6 @@ class Ball {
         this.color = color;
 
         this.updateVelocity = function() {
-            this.angle = calculateAngle();
             this.dx = Math.cos(this.angle*(Math.PI/180)) * this.velocity;
             this.dy = Math.sin(this.angle*(Math.PI/180)) * this.velocity;
         }
@@ -57,6 +57,7 @@ class Ball {
 
             // checking if anyone won point
             if (this.x - this.radius <= 0 || this.x + this.radius >= canvas.width) {
+                this.angle = calculateAngle();
                 this.updateVelocity();
                 this.x = canvas.width/2;
                 this.y = randomIntFromRange(0.25 * canvas.height, 0.75 * canvas.height);
@@ -69,7 +70,23 @@ class Ball {
                     if (this.x - this.radius <= paddle.x + paddle.w &&
                         this.y <= paddle.y + paddle.h &&
                         this.y >= paddle.y) {
-                            this.dx = -this.dx
+                            this.dx = -this.dx;
+
+                            // rotating ball after collision based on distance from center of paddle
+                            let distanceFromCenter = this.y - paddle.y - paddle.h * 0.5;
+                            if (distanceFromCenter < 0) {
+                                distanceFromCenter = -distanceFromCenter;
+                                this.angle = -60 * (distanceFromCenter / (paddle.h/2));
+                                this.updateVelocity();
+                            }
+                            else if (distanceFromCenter > 0) {
+                                this.angle = 60 * (distanceFromCenter / (paddle.h/2));
+                                this.updateVelocity();
+                            }
+                            else {
+                                this.angle = 0;
+                                this.updateVelocity();
+                            }
                     }
                 } 
 
@@ -79,6 +96,22 @@ class Ball {
                         this.y <= paddle.y + paddle.h &&
                         this.y >= paddle.y) {
                             this.dx = -this.dx
+
+                            // rotating ball after collision based on distance from center of paddle
+                            let distanceFromCenter = this.y - paddle.y - paddle.h * 0.5;
+                            if (distanceFromCenter < 0) {
+                                distanceFromCenter = -distanceFromCenter;
+                                this.angle = 180 + 60 * (distanceFromCenter / (paddle.h/2));
+                                this.updateVelocity();
+                            }
+                            else if (distanceFromCenter > 0) {
+                                this.angle = 180 - 60 * (distanceFromCenter / (paddle.h/2));
+                                this.updateVelocity();
+                            }
+                            else {
+                                this.angle = 180;
+                                this.updateVelocity();
+                            }
                     }
                 }
             })
@@ -124,7 +157,7 @@ let rightPaddle;
 const paddles = [];
 
 function init() {
-    ball = new Ball(canvas.width/2, canvas.height/2, 5, calculateAngle(), 5, '#f3f3f3');
+    ball = new Ball(canvas.width/2, canvas.height/2, ballSpeed, calculateAngle(), 5, '#f3f3f3');
 
     const hPaddle = 100;
     const wPaddle = 5;
