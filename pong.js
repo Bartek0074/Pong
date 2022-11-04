@@ -6,6 +6,8 @@ canvas.width = 600;
 canvas.height = 450;
 
 // Variables
+const paddleSpeed = 5;
+
 
 // Utility functions
 function randomIntFromRange(min, max) {
@@ -23,6 +25,40 @@ function calculateAngle() {
   
 
 // Event listeners
+
+window.addEventListener('keydown', e => {
+    switch (e.key) {
+        case 'w':
+            leftPaddle.dy = -paddleSpeed;
+            break;
+        case 's':
+            leftPaddle.dy = paddleSpeed;
+            break;
+        case 'ArrowUp':
+            rightPaddle.dy = -paddleSpeed;
+            break;
+        case 'ArrowDown':
+            rightPaddle.dy = paddleSpeed;
+            break;
+    }
+})
+
+window.addEventListener('keyup', e => {
+    switch (e.key) {
+        case 'w':
+            leftPaddle.dy = 0;
+            break;
+        case 's':
+            leftPaddle.dy = 0;
+            break;
+        case 'ArrowUp':
+            rightPaddle.dy = 0;
+            break;
+        case 'ArrowDown':
+            rightPaddle.dy = 0;
+            break;
+    }
+})
 
 // Classes
 class Ball {
@@ -71,18 +107,47 @@ class Ball {
     }
 }
 
+class Paddle {
+    constructor(x, y, w, h, isLeft) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.dy = 0;
+        this.isLeft = isLeft;
+
+        this.draw = function() {
+            ctx.beginPath();
+            ctx.rect(this.x, this.y, this.w, this.h);
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        this.update = function() {
+            if (this.y + this.dy > 0 && this.y + this.h + this.dy < canvas.height) {
+                this.y += this.dy
+            }
+            this.draw();
+        }
+    }
+}
+
 // Implementation
 
 let ball;
+let leftPaddle;
+let rightPaddle;
+const paddles = [];
 
 function init() {
-    const x = canvas.width/2;
-    const y = canvas.height/2;
-    const velocity = 5;
-    const angle = calculateAngle();
-    const radius = 5;
-    const color = '#f3f3f3'
-    ball = new Ball(x, y, velocity, angle, radius, color);
+    ball = new Ball(canvas.width/2, canvas.height/2, 5, calculateAngle(), 5, '#f3f3f3');
+
+    const hPaddle = 100;
+    const wPaddle = 5;
+
+    leftPaddle = new Paddle(5, canvas.height/2 - hPaddle/2, wPaddle, hPaddle, true);
+    rightPaddle = new Paddle(canvas.width - 10, canvas.height/2 - hPaddle/2, wPaddle, hPaddle, false);
+    paddles.push(leftPaddle, rightPaddle);
 }
 
 // Animation loop
@@ -92,6 +157,8 @@ const animate = function() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ball.update();
+    leftPaddle.update();
+    rightPaddle.update();
 }
 
 init();
