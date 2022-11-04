@@ -23,43 +23,6 @@ function calculateAngle() {
     return angle;
 }
   
-
-// Event listeners
-
-window.addEventListener('keydown', e => {
-    switch (e.key) {
-        case 'w':
-            leftPaddle.dy = -paddleSpeed;
-            break;
-        case 's':
-            leftPaddle.dy = paddleSpeed;
-            break;
-        case 'ArrowUp':
-            rightPaddle.dy = -paddleSpeed;
-            break;
-        case 'ArrowDown':
-            rightPaddle.dy = paddleSpeed;
-            break;
-    }
-})
-
-window.addEventListener('keyup', e => {
-    switch (e.key) {
-        case 'w':
-            leftPaddle.dy = 0;
-            break;
-        case 's':
-            leftPaddle.dy = 0;
-            break;
-        case 'ArrowUp':
-            rightPaddle.dy = 0;
-            break;
-        case 'ArrowDown':
-            rightPaddle.dy = 0;
-            break;
-    }
-})
-
 // Classes
 class Ball {
     constructor(x, y, velocity, angle, radius, color){
@@ -98,6 +61,27 @@ class Ball {
                 this.x = canvas.width/2;
                 this.y = randomIntFromRange(0.25 * canvas.height, 0.75 * canvas.height);
             }
+
+            // collision
+            paddles.forEach(paddle => {
+                // leftPaddle
+                if (paddle.isLeft === true) {
+                    if (this.x - this.radius <= paddle.x + paddle.w &&
+                        this.y <= paddle.y + paddle.h &&
+                        this.y >= paddle.y) {
+                            this.dx = -this.dx
+                    }
+                } 
+
+                // rightPddle
+                    else {
+                    if (this.x + this.radius >= paddle.x - paddle.w &&
+                        this.y <= paddle.y + paddle.h &&
+                        this.y >= paddle.y) {
+                            this.dx = -this.dx
+                    }
+                }
+            })
 
             this.x += this.dx;
             this.y += this.dy;
@@ -160,6 +144,43 @@ const animate = function() {
     leftPaddle.update();
     rightPaddle.update();
 }
+
+// Event listeners
+
+window.addEventListener('keydown', e => {
+    switch (e.key) {
+        case 'w':
+            leftPaddle.dy = -paddleSpeed;
+            break;
+        case 's':
+            leftPaddle.dy = paddleSpeed;
+            break;
+        case 'ArrowUp':
+            rightPaddle.dy = -paddleSpeed;
+            break;
+        case 'ArrowDown':
+            rightPaddle.dy = paddleSpeed;
+            break;
+    }
+})
+
+window.addEventListener('keyup', e => {
+    switch (e.key) {
+        case 'w':
+            leftPaddle.dy = 0;
+            break;
+        case 's':
+            leftPaddle.dy = 0;
+            break;
+        case 'ArrowUp':
+            rightPaddle.dy = 0;
+            break;
+        case 'ArrowDown':
+            rightPaddle.dy = 0;
+            break;
+    }
+})
+
 
 init();
 
